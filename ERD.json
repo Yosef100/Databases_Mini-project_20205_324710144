@@ -1,0 +1,307 @@
+{
+  "tables": {
+    "department": {
+      "columns": [
+        {
+          "name": "department_id",
+          "type": "SERIAL",
+          "pk": true
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(200)",
+          "pk": false
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "pk": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "pk": false
+        }
+      ]
+    },
+    "position": {
+      "columns": [
+        {
+          "name": "position_id",
+          "type": "SERIAL",
+          "pk": true
+        },
+        {
+          "name": "title",
+          "type": "VARCHAR(200)",
+          "pk": false
+        },
+        {
+          "name": "department_id",
+          "type": "INT",
+          "pk": false,
+          "fk": "department.department_id"
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "pk": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "pk": false
+        }
+      ]
+    },
+    "employee": {
+      "columns": [
+        {
+          "name": "employee_id",
+          "type": "SERIAL",
+          "pk": true
+        },
+        {
+          "name": "first_name",
+          "type": "VARCHAR(100)",
+          "pk": false
+        },
+        {
+          "name": "last_name",
+          "type": "VARCHAR(100)",
+          "pk": false
+        },
+        {
+          "name": "email",
+          "type": "VARCHAR(255) UNIQUE",
+          "pk": false
+        },
+        {
+          "name": "phone",
+          "type": "VARCHAR(50)",
+          "pk": false
+        },
+        {
+          "name": "birth_date",
+          "type": "DATE",
+          "pk": false
+        },
+        {
+          "name": "hire_date",
+          "type": "DATE",
+          "pk": false
+        },
+        {
+          "name": "termination_date",
+          "type": "DATE",
+          "pk": false
+        },
+        {
+          "name": "active",
+          "type": "BOOLEAN",
+          "pk": false
+        },
+        {
+          "name": "department_id",
+          "type": "INT",
+          "pk": false,
+          "fk": "department.department_id"
+        },
+        {
+          "name": "position_id",
+          "type": "INT",
+          "pk": false,
+          "fk": "position.position_id"
+        },
+        {
+          "name": "manager_id",
+          "type": "INT",
+          "pk": false,
+          "fk": "employee.employee_id (self-ref)"
+        },
+        {
+          "name": "emergency_contacts",
+          "type": "JSONB",
+          "pk": false
+        },
+        {
+          "name": "notes",
+          "type": "TEXT",
+          "pk": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "pk": false
+        }
+      ]
+    },
+    "payroll": {
+      "columns": [
+        {
+          "name": "payroll_id",
+          "type": "SERIAL",
+          "pk": true
+        },
+        {
+          "name": "employee_id",
+          "type": "INT",
+          "pk": false,
+          "fk": "employee.employee_id"
+        },
+        {
+          "name": "amount",
+          "type": "NUMERIC(12,2)",
+          "pk": false
+        },
+        {
+          "name": "pay_date",
+          "type": "DATE",
+          "pk": false
+        },
+        {
+          "name": "notes",
+          "type": "TEXT",
+          "pk": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "pk": false
+        }
+      ]
+    },
+    "employee_license": {
+      "columns": [
+        {
+          "name": "license_id",
+          "type": "SERIAL",
+          "pk": true
+        },
+        {
+          "name": "employee_id",
+          "type": "INT",
+          "pk": false,
+          "fk": "employee.employee_id"
+        },
+        {
+          "name": "license_name",
+          "type": "VARCHAR(200)",
+          "pk": false
+        },
+        {
+          "name": "issued_date",
+          "type": "DATE",
+          "pk": false
+        },
+        {
+          "name": "expiry_date",
+          "type": "DATE",
+          "pk": false
+        },
+        {
+          "name": "notes",
+          "type": "TEXT",
+          "pk": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "pk": false
+        }
+      ]
+    },
+    "oncall_shift": {
+      "columns": [
+        {
+          "name": "shift_id",
+          "type": "SERIAL",
+          "pk": true
+        },
+        {
+          "name": "employee_id",
+          "type": "INT",
+          "pk": false,
+          "fk": "employee.employee_id"
+        },
+        {
+          "name": "day_of_week",
+          "type": "INT",
+          "pk": false,
+          "notes": "1=Mon..7=Sun"
+        },
+        {
+          "name": "start_time",
+          "type": "TIME",
+          "pk": false
+        },
+        {
+          "name": "end_time",
+          "type": "TIME",
+          "pk": false
+        },
+        {
+          "name": "escalation_order",
+          "type": "INT",
+          "pk": false
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP",
+          "pk": false
+        }
+      ]
+    }
+  },
+  "relationships": [
+    {
+      "from_table": "position",
+      "from_column": "department_id",
+      "to_table": "department",
+      "to_column": "department_id",
+      "type": "many-to-one"
+    },
+    {
+      "from_table": "employee",
+      "from_column": "department_id",
+      "to_table": "department",
+      "to_column": "department_id",
+      "type": "many-to-one"
+    },
+    {
+      "from_table": "employee",
+      "from_column": "position_id",
+      "to_table": "position",
+      "to_column": "position_id",
+      "type": "many-to-one"
+    },
+    {
+      "from_table": "employee",
+      "from_column": "manager_id",
+      "to_table": "employee",
+      "to_column": "employee_id",
+      "type": "many-to-one (self)"
+    },
+    {
+      "from_table": "payroll",
+      "from_column": "employee_id",
+      "to_table": "employee",
+      "to_column": "employee_id",
+      "type": "many-to-one"
+    },
+    {
+      "from_table": "employee_license",
+      "from_column": "employee_id",
+      "to_table": "employee",
+      "to_column": "employee_id",
+      "type": "many-to-one"
+    },
+    {
+      "from_table": "oncall_shift",
+      "from_column": "employee_id",
+      "to_table": "employee",
+      "to_column": "employee_id",
+      "type": "many-to-one"
+    }
+  ]
+}
