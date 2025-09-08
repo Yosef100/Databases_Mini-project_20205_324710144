@@ -1,0 +1,177 @@
+travel agency - personnel=# \i 'C:/sql/ConstraintsViolations.sql'
+-- =========================
+-- employee: NOT NULL hire_date
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:47: ERROR:  null value in column "hire_date" of relation "employee" violates not-null constraint
+DETAIL:  Failing row contains (999997036, NoHire, Test, nohire_insert@example.com, null, null, null, null, t, null, null, null, null, null, null).
+Time: 20.803 ms
+
+psql:C:/sql/ConstraintsViolations.sql:58: ERROR:  null value in column "hire_date" of relation "employee" violates not-null constraint
+DETAIL:  Failing row contains (999997037, HasHire, Test, nohire_update@example.com, null, null, null, null, t, null, null, null, null, null, null).
+Time: 19.461 ms
+
+-- =========================
+-- employee: CHECK hire before termination
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:67: ERROR:  new row for relation "employee" violates check constraint "chk_hire_before_termination"
+DETAIL:  Failing row contains (999997038, Term, Insert, term_insert@example.com, null, null, 2024-01-10, 2024-01-01, t, null, null, null, null, null, null).
+Time: 15.696 ms
+
+psql:C:/sql/ConstraintsViolations.sql:76: ERROR:  new row for relation "employee" violates check constraint "chk_hire_before_termination"
+DETAIL:  Failing row contains (999997039, TermLegal, Test, term_update@example.com, null, null, 2024-01-01, 2023-12-31, t, null, null, null, null, null, null).
+Time: 22.259 ms
+
+-- =========================
+-- employee: CHECK birth_age
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:85: ERROR:  new row for relation "employee" violates check constraint "chk_birth_age"
+DETAIL:  Failing row contains (999997040, Young, Insert, birth_insert_young@example.com, null, 2010-01-02, 2024-01-01, null, t, null, null, null, null, null, null).
+Time: 15.878 ms
+
+psql:C:/sql/ConstraintsViolations.sql:94: ERROR:  new row for relation "employee" violates check constraint "chk_birth_age"
+DETAIL:  Failing row contains (999997041, AgeLegal, Test, birth_update@example.com, null, 2010-01-02, 2024-01-01, null, t, null, null, null, null, null, null).
+Time: 17.013 ms
+
+-- =========================
+-- employee: CHECK email non-empty
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:103: ERROR:  new row for relation "employee" violates check constraint "chk_email_nonempty"
+DETAIL:  Failing row contains (999997042, BlankEmail, Insert,    , null, null, 2024-01-01, null, t, null, null, null, null, null, null).
+Time: 18.559 ms
+
+psql:C:/sql/ConstraintsViolations.sql:112: ERROR:  new row for relation "employee" violates check constraint "chk_email_nonempty"
+DETAIL:  Failing row contains (999997043, EmailLegal, Test, , null, null, 2024-01-01, null, t, null, null, null, null, null, null).
+Time: 23.248 ms
+
+-- =========================
+-- payroll: referenced employee has no hire_date
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:120: ERROR:  Referenced employee <NULL> does not exist or has no hire_date
+CONTEXT:  PL/pgSQL function payroll_pay_date_after_hire() line 9 at RAISE
+Time: 13.731 ms
+
+psql:C:/sql/ConstraintsViolations.sql:141: ERROR:  Referenced employee <NULL> does not exist or has no hire_date
+CONTEXT:  PL/pgSQL function payroll_pay_date_after_hire() line 9 at RAISE
+Time: 18.136 ms
+
+-- =========================
+-- payroll: NOT NULL amount
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:155: ERROR:  null value in column "amount" of relation "payroll" violates not-null constraint
+DETAIL:  Failing row contains (67545, 999997044, null, 2024-01-15, null, null).
+Time: 19.674 ms
+
+psql:C:/sql/ConstraintsViolations.sql:172: ERROR:  null value in column "amount" of relation "payroll" violates not-null constraint
+DETAIL:  Failing row contains (67546, 999997044, null, 2024-02-15, null, null).
+Time: 20.419 ms
+
+-- =========================
+-- payroll: NOT NULL pay_date
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:186: ERROR:  null value in column "pay_date" of relation "payroll" violates not-null constraint
+DETAIL:  Failing row contains (67547, 999997044, 50.00, null, null, null).
+Time: 15.408 ms
+
+psql:C:/sql/ConstraintsViolations.sql:203: ERROR:  null value in column "pay_date" of relation "payroll" violates not-null constraint
+DETAIL:  Failing row contains (67548, 999997044, 50.00, null, null, null).
+Time: 17.296 ms
+
+-- =========================
+-- payroll: CHECK amount non-negative
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:217: ERROR:  new row for relation "payroll" violates check constraint "chk_payroll_amount_nonneg"
+DETAIL:  Failing row contains (67549, 999997044, -100.00, 2024-01-15, null, null).
+Time: 15.494 ms
+
+psql:C:/sql/ConstraintsViolations.sql:234: ERROR:  new row for relation "payroll" violates check constraint "chk_payroll_amount_nonneg"
+DETAIL:  Failing row contains (67550, 999997044, -1.00, 2024-04-01, null, null).
+Time: 22.619 ms
+
+-- =========================
+-- payroll: pay_date after hire_date
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:248: ERROR:  Payroll pay_date (1900-01-01) is before employee (999997044) hire_date (2024-01-01)
+CONTEXT:  PL/pgSQL function payroll_pay_date_after_hire() line 13 at RAISE
+Time: 15.695 ms
+
+psql:C:/sql/ConstraintsViolations.sql:265: ERROR:  Payroll pay_date (1900-01-01) is before employee (999997044) hire_date (2024-01-01)
+CONTEXT:  PL/pgSQL function payroll_pay_date_after_hire() line 13 at RAISE
+Time: 14.066 ms
+
+-- =========================
+-- oncall_shift: NOT NULL day_of_week
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:279: ERROR:  null value in column "day_of_week" of relation "oncall_shift" violates not-null constraint
+DETAIL:  Failing row contains (134883, 999997044, null, 09:00:00, 17:00:00, 1, null).
+Time: 15.507 ms
+
+psql:C:/sql/ConstraintsViolations.sql:296: ERROR:  null value in column "day_of_week" of relation "oncall_shift" violates not-null constraint
+DETAIL:  Failing row contains (134884, 999997044, null, 09:00:00, 17:00:00, 1, null).
+Time: 42.815 ms
+
+-- =========================
+-- oncall_shift: CHECK day_of_week
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:310: ERROR:  new row for relation "oncall_shift" violates check constraint "oncall_shift_day_of_week_check"
+DETAIL:  Failing row contains (134885, 999997044, 8, 09:00:00, 10:00:00, 1, null).
+Time: 13.768 ms
+
+psql:C:/sql/ConstraintsViolations.sql:327: ERROR:  new row for relation "oncall_shift" violates check constraint "oncall_shift_day_of_week_check"
+DETAIL:  Failing row contains (134886, 999997044, 0, 09:00:00, 10:00:00, 1, null).
+Time: 33.608 ms
+
+-- =========================
+-- oncall_shift: NOT NULL start_time
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:341: ERROR:  null value in column "start_time" of relation "oncall_shift" violates not-null constraint
+DETAIL:  Failing row contains (134887, 999997044, 1, null, 17:00:00, 1, null).
+Time: 15.196 ms
+
+psql:C:/sql/ConstraintsViolations.sql:358: ERROR:  null value in column "start_time" of relation "oncall_shift" violates not-null constraint
+DETAIL:  Failing row contains (134888, 999997044, 3, null, 16:00:00, 1, null).
+Time: 31.765 ms
+
+-- =========================
+-- oncall_shift: NOT NULL end_time
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:372: ERROR:  null value in column "end_time" of relation "oncall_shift" violates not-null constraint
+DETAIL:  Failing row contains (134889, 999997044, 1, 09:00:00, null, 1, null).
+Time: 18.229 ms
+
+psql:C:/sql/ConstraintsViolations.sql:389: ERROR:  null value in column "end_time" of relation "oncall_shift" violates not-null constraint
+DETAIL:  Failing row contains (134890, 999997044, 4, 09:00:00, null, 1, null).
+Time: 44.346 ms
+
+-- =========================
+-- oncall_shift: NOT NULL escalation_order
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:403: ERROR:  null value in column "escalation_order" of relation "oncall_shift" violates not-null constraint
+DETAIL:  Failing row contains (134891, 999997044, 1, 09:00:00, 10:00:00, null, null).
+Time: 12.167 ms
+
+psql:C:/sql/ConstraintsViolations.sql:420: ERROR:  null value in column "escalation_order" of relation "oncall_shift" violates not-null constraint
+DETAIL:  Failing row contains (134892, 999997044, 5, 09:00:00, 10:00:00, null, null).
+Time: 38.956 ms
+
+-- =========================
+-- oncall_shift: CHECK escalation_order
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:434: ERROR:  new row for relation "oncall_shift" violates check constraint "oncall_shift_escalation_order_check"
+DETAIL:  Failing row contains (134893, 999997044, 1, 09:00:00, 10:00:00, 0, null).
+Time: 15.432 ms
+
+psql:C:/sql/ConstraintsViolations.sql:451: ERROR:  new row for relation "oncall_shift" violates check constraint "oncall_shift_escalation_order_check"
+DETAIL:  Failing row contains (134894, 999997044, 6, 09:00:00, 10:00:00, 0, null).
+Time: 41.795 ms
+
+-- =========================
+-- oncall_shift: CHECK shift order
+-- =========================
+psql:C:/sql/ConstraintsViolations.sql:465: ERROR:  new row for relation "oncall_shift" violates check constraint "chk_shift_order"
+DETAIL:  Failing row contains (134895, 999997044, 1, 17:00:00, 09:00:00, 1, null).
+Time: 12.264 ms
+
+psql:C:/sql/ConstraintsViolations.sql:482: ERROR:  new row for relation "oncall_shift" violates check constraint "chk_shift_order"
+DETAIL:  Failing row contains (134896, 999997044, 7, 18:00:00, 17:00:00, 1, null).
+Time: 36.704 ms
+

@@ -1,0 +1,31 @@
+-- =========================
+-- employee: NOT NULL constraint on hire_date
+-- Failing rows were inserted with hire_date = NULL to test the NOT NULL constraint.
+-- =========================
+-- employee: CHECK constraint chk_hire_before_termination
+-- Failing rows had hire_date after termination_date to test the constraint.
+-- =========================
+-- employee: CHECK constraint chk_birth_age
+-- Failing rows had birth_date too recent to meet age requirement.
+-- =========================
+-- employee: CHECK constraint chk_email_nonempty
+-- Failing rows had blank email to test non-empty email validation.
+-- =========================
+-- payroll: payroll_pay_date_after_hire() function
+-- Failing rows referenced employees that were NULL or had no hire_date.
+-- =========================
+-- payroll: NOT NULL constraint on amount
+-- Failing rows had amount = NULL to test NOT NULL constraint.
+-- =========================
+-- payroll: NOT NULL constraint on pay_date
+-- Failing rows had pay_date = NULL to test NOT NULL constraint.
+-- =========================
+-- payroll: CHECK constraint chk_payroll_amount_nonneg
+-- Failing rows had negative amounts to test non-negative check.
+-- =========================
+-- oncall_shift: NOT NULL constraint on day_of_week, start_time, end_time, escalation_order
+-- Failing rows had NULL values in these columns to test NOT NULL enforcement.
+-- =========================
+-- oncall_shift: CHECK constraints on day_of_week, escalation_order, and shift_order
+-- Failing rows had invalid values (e.g., day_of_week = 0 or 8, escalation_order = 0, start_time > end_time)
+-- to test the check constraints.
