@@ -1,3 +1,4 @@
+travel agency - personnel=# \i 'C:/sql/ConstraintsViolations.sql'
 -- =========================
 -- employee: NOT NULL hire_date
 -- =========================
@@ -173,3 +174,4 @@ Time: 12.264 ms
 psql:C:/sql/ConstraintsViolations.sql:482: ERROR:  new row for relation "oncall_shift" violates check constraint "chk_shift_order"
 DETAIL:  Failing row contains (134896, 999997044, 7, 18:00:00, 17:00:00, 1, null).
 Time: 36.704 ms
+
