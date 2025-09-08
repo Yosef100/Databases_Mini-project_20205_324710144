@@ -10,14 +10,7 @@ It explains the high-level goals, the chosen entities, relationships, normalizat
 
 ## High-Level Goals and Intent
 The personnel schema was designed to capture the core HR and staffing data needed by a travel agency.  
-The goal is to provide a structured way to manage employees, their roles and reporting lines, payroll history, professional licenses, and on-call scheduling.  
-
-
-# ERD:
-<img width="1034" height="571" alt="image" src="https://github.com/user-attachments/assets/638bb5c2-5285-4e3d-935b-1294be0e16a5" />
-
-# DSD:
-<img width="1024" height="1024" alt="ChatGPT Image Sep 3, 2025, 03_18_53 PM" src="https://github.com/user-attachments/assets/904a9977-c757-4902-95fe-77dc8a5bdc31" />
+This database is designed to manage the personnel and operational data of a travel agency. It organizes employee records, payroll information, and on-call shift schedules in a structured and efficient way. The system ensures data integrity through constraints on key attributes such as hire dates, ages, and payroll amounts, while also maintaining clear relationships between employees, payroll records, and shifts. By providing a reliable framework for storing and querying information, the database supports the agency’s day-to-day operations and enables accurate reporting and decision-making. 
 
 The database should make it easy to answer practical questions such as:
 - Which employees are in each department and position?  
@@ -27,6 +20,10 @@ The database should make it easy to answer practical questions such as:
 - Who is scheduled to be on call at a given time?  
 
 ---
+
+# ERD:
+<img width="798" height="550" alt="image" src="https://github.com/user-attachments/assets/0774995e-01ca-4feb-b05e-9ea212c5227e" />
+
 
 ## Final Chosen Entities (and Why)
 
@@ -100,4 +97,95 @@ https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/per
 ## Dump/Restore Test:
 <img width="553" height="295" alt="image" src="https://github.com/user-attachments/assets/2032c380-fb8e-4c5d-9f96-217507f65ae3" />
 <img width="566" height="279" alt="image" src="https://github.com/user-attachments/assets/25449eae-aaa4-40ef-a192-2573a52302ee" />
+
+## Stage 2:
+# Backups:
+the script, backup and log for the two backup methods
+A.
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/PSQL%20backup%20script.bat
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/backupSQL.sql
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/backupSQL.log
+B.
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/PSQL%20backup%20script.bat
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/backupPSQL.sql
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/backupPSQL.log
+
+# Queries
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/Queries.sql
+
+Select
+
+- list every active employee with their department name, job title and manager's name (if any), ordered alphabetically by last name.
+- for each month with payroll activity, show how many payments were made and the total, average, minimum and maximum payment amounts — newest months first.
+- find all employee licenses that will expire in the next 60 days, with how many days remain — ordered by nearest expiry.
+- for each employee show how many on-call shifts they have and the total on-call time (as an interval), ordered by who has the most on-call time.
+
+Update
+- mark as inactive any employee who already has a termination_date on or before today
+- change the position of every employee currently in the "Junior Developer" role to the "Senior Developer" role.
+
+Delete
+- remove old payroll rows (older than seven years).
+- remove any department that has neither positions assigned to it nor employees assigned to it (i.e., a completely unused department).
+
+Parametrized
+- the top N employees (by total payroll amount) in department department_name between start_date and end_date.
+- for the next X days (where X = days_ahead), list employees who have licenses that will expire, how many licenses will expire, and the nearest expiry date — ordered by most urgent
+- for year YYYY (pass as year), compute each employee's total pay that year, then summarize those per position: how many employees had payroll activity, average of employee totals, min, max and sum — sorted by average descending
+- for the chosen day_of_week, find every pair of employees who have shifts that overlap in time. Returns each pair, how many overlapping shift-pairs they have, and the earliest/latest overlap times (per grouped set).
+
+
+# Indexes:
+Added indexes on:
+
+- paydate of Payroll - aids in queries 2,7,9,11
+
+- dept. ID of Employee - aids in queries 1,8,9,11
+
+- expiry_date of employee_license - aids in queries 3,10
+
+# Timing: Before | After
+<img width="862" height="579" alt="stage 2 timings" src="https://github.com/user-attachments/assets/edd68d16-a76f-4254-9338-d64cebbb7a57" />
+
+# Constraints
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/Constraints.sql
+
+- employee — NOT NULL — hire_date must be present.
+- employee — CHECK — termination_date, if present, must be after hire_date.
+- employee — CHECK — if birth_date is present, age at hire must be between 18 and 65 years.
+- employee — CHECK — email must not be NULL or blank.
+- payroll — NOT NULL — employee_id must be present.
+- payroll — NOT NULL — amount must be present.
+- payroll — NOT NULL — pay_date must be present.
+- payroll — CHECK — amount must be non-negative.
+- payroll — TRIGGER (row-level BEFORE) — pay_date must be on or after the referenced employee’s hire_date.
+- oncall_shift — NOT NULL — day_of_week must be present.
+- oncall_shift — CHECK — day_of_week must be between 1 and 7.
+- oncall_shift — NOT NULL — start_time must be present.
+- oncall_shift — NOT NULL — end_time must be present.
+- oncall_shift — NOT NULL — escalation_order must be present.
+- oncall_shift — CHECK — escalation_order must be greater than zero.
+- oncall_shift — CHECK — start_time must be before end_time.
+
+log
+
+<img width="862" height="505" alt="constraints" src="https://github.com/user-attachments/assets/622ae9b6-029f-48f5-b114-721a40257e17" />
+
+
+Violations:
+
+script:
+
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/ConstraintsViolations.sql
+
+resulting errors:
+
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/constrainsViolationsOutput.txt
+
+Explanation of errors:
+
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/constraintsErrorsExplanations.txt
+
+
+
 
