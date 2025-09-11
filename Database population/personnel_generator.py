@@ -26,6 +26,7 @@
 #
 # The script writes SQL files to the output directory and does not require a DB connection.
 #
+
 import os
 import sys
 import random
@@ -34,12 +35,12 @@ import json
 import argparse
 
 # --------------------------- Configurable parameters ---------------------------
-DEFAULT_NUM_EMPLOYEES = 45000
+DEFAULT_NUM_EMPLOYEES = 100000
 OUT_DIR_DEFAULT = os.path.join(os.getcwd(), "output_sql_explicit_ids")
 CHUNK_SIZE = 1000  # rows per INSERT statement chunk
-PAYROLL_PER_EMP_RANGE = (1, 2)   # at least 1 payroll per employee
-LICENSE_RATIO = 0.12              # fraction of employees who have license rows
-LICENSE_PER_EMP_RANGE = (1, 2)
+PAYROLL_PER_EMP_RANGE = (1, 3)   # at least 1 payroll per employee
+LICENSE_RATIO = 0.5              # fraction of employees who have license rows
+LICENSE_PER_EMP_RANGE = (1, 3)
 ONCALL_SHIFTS_MIN = 1
 ONCALL_SHIFTS_MAX = 5
 
@@ -54,17 +55,17 @@ EMAIL_DOMAINS = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "proton
 # --------------------------- Helper functions ---------------------------
 
 def sql_escape(val):
-    \"\"\"Very small helper to escape single quotes for SQL string literals.
-    Not a full SQL sanitizer (for generated data only).\"\"\"
+    """Very small helper to escape single quotes for SQL string literals.
+    Not a full SQL sanitizer (for generated data only)."""
     if val is None:
         return "NULL"
-    return "'" + str(val).replace(\"'\", \"''\") + "'"
+    return "'" + str(val).replace("'", "''") + "'"
 
 # --------------------------- Constraint check functions (grouped) ---------------------------
 # All return True if constraint holds, False otherwise.
 
 def hire_before_termination(hire_date, termination_date):
-    \"\"\"Return True if hire_date < termination_date OR termination_date is None/empty.\"\"\"
+    """Return True if hire_date < termination_date OR termination_date is None/empty."""
     if termination_date is None or termination_date == "":
         return True
     if isinstance(hire_date, str):
@@ -74,7 +75,7 @@ def hire_before_termination(hire_date, termination_date):
     return hire_date < termination_date
 
 def birth_within_age_range(hire_date, birth_date, min_age=18, max_age=65):
-    \"\"\"Return True if birth_date is between min_age and max_age years before hire_date.\"\"\"
+    """Return True if birth_date is between min_age and max_age years before hire_date."""
     if isinstance(hire_date, str):
         hire_date = datetime.date.fromisoformat(hire_date)
     if isinstance(birth_date, str):
@@ -83,7 +84,7 @@ def birth_within_age_range(hire_date, birth_date, min_age=18, max_age=65):
     return (years >= min_age) and (years <= max_age)
 
 def hire_before_pay(hire_date, pay_date):
-    \"\"\"Return True if payroll pay_date >= hire_date.\"\"\"
+    """Return True if payroll pay_date >= hire_date."""
     if isinstance(hire_date, str):
         hire_date = datetime.date.fromisoformat(hire_date)
     if isinstance(pay_date, str):
@@ -93,13 +94,13 @@ def hire_before_pay(hire_date, pay_date):
 # --------------------------- Random & date helpers ---------------------------
 
 def rand_date():
-    \"\"\"Random ISO date between DATE_MIN and DATE_MAX (inclusive).\"\"\"
+    """Random ISO date between DATE_MIN and DATE_MAX (inclusive)."""
     delta = (DATE_MAX - DATE_MIN).days
     d = DATE_MIN + datetime.timedelta(days=random.randint(0, delta))
     return d.isoformat()
 
 def rand_date_between(start_iso, end_iso):
-    \"\"\"Random ISO date between two ISO dates/objects (inclusive).\"\"\"
+    """Random ISO date between two ISO dates/objects (inclusive)."""
     if isinstance(start_iso, str):
         start = datetime.date.fromisoformat(start_iso)
     else:
@@ -115,27 +116,33 @@ def rand_date_between(start_iso, end_iso):
     return d.isoformat()
 
 def rand_datetime_minute():
-    \"\"\"Random timestamp (minute precision) between DT_MIN and DT_MAX in format YYYY-MM-DD HH:MM.\"\"\"
+    """Random timestamp (minute precision) between DT_MIN and DT_MAX in format YYYY-MM-DD HH:MM."""
     total_minutes = int((DT_MAX - DT_MIN).total_seconds() // 60)
     mins = random.randint(0, total_minutes)
     dt = DT_MIN + datetime.timedelta(minutes=mins)
-    return dt.strftime(\"%Y-%m-%d %H:%M\")
+    return dt.strftime("%Y-%m-%d %H:%M")
 
 def rand_time(min_hour=0, max_hour=23, minute_choices=(0,15,30,45)):
-    \"\"\"Return a time string HH:MM (no seconds).\"\"\"
+    """Return a time string HH:MM (no seconds)."""
     h = random.randint(min_hour, max_hour)
     m = random.choice(minute_choices)
-    return f\"{h:02d}:{m:02d}\"
+    return f"{h:02d}:{m:02d}"
 
 def generate_unique_eids(n):
-    \"\"\"Generate n unique 9-digit employee IDs that don't start with 0.\"\"\"
+    """Generate n unique 9-digit employee IDs that don't start with 0."""
     start = 100_000_000
     end = 999_999_999
     # sample without replacement
     return random.sample(range(start, end+1), n)
 
+def generate_address():
+    """Generate a random address like '123 Maple St.'"""
+    number = random.randint(1, 9999)  # street number
+    name = random.choice(STREET_NAMES)
+    suffix = random.choice(STREET_SUFFIXES)
+    return f"{number} {name} {suffix}"
+
 # --------------------------- Static data lists ---------------------------
-# First & last name lists with 100+ entries each (kept similar to earlier versions)
 FIRST_NAMES = [
 "Oliver","Noah","Liam","Elijah","James","William","Benjamin","Lucas","Henry","Alexander","Mason","Michael","Ethan","Daniel","Jacob","Logan",
 "Jackson","Levi","Sebastian","Mateo","Jack","Owen","Theodore","Aiden","Samuel","Joseph","John","David","Wyatt","Matthew","Luke","Asher",
@@ -218,18 +225,21 @@ NOTES = [
 "Safety trained","Temporary contractor","Under NDA","Background check pending","Eligible for promotion","Receives travel benefits"
 ]
 
+STREET_NAMES = ["Maple", "Oak", "Pine", "Cedar", "Elm", "Birch", "Main", "Park", "Lake", "Hill"]
+STREET_SUFFIXES = ["St.", "Ave.", "Blvd.", "Rd.", "Ln.", "Dr."]
+
 # --------------------------- Core generation logic ---------------------------
 
 def write_inserts_chunked(path, table, cols, rows, chunk=CHUNK_SIZE):
-    \"\"\"Append chunked INSERT statements to the file at 'path'. Rows are pre-escaped strings.\"\"\"
+    """Append chunked INSERT statements to the file at 'path'. Rows are pre-escaped strings."""
     with open(path, "a", encoding="utf-8") as f:
         for i in range(0, len(rows), chunk):
             chunk_rows = rows[i:i+chunk]
-            values = \",\\n\".join(\"(\" + \", \".join(r) + \")\" for r in chunk_rows)
-            f.write(f\"INSERT INTO {table} ({', '.join(cols)}) VALUES\\n{values};\\n\\n\")
+            values = ",\n".join("(" + ", ".join(r) + ")" for r in chunk_rows)
+            f.write(f"INSERT INTO {table} ({', '.join(cols)}) VALUES\n{values};\n\n")
 
 def generate_files(num_employees=DEFAULT_NUM_EMPLOYEES, out_dir=OUT_DIR_DEFAULT, write_sequences=True):
-    \"\"\"Generate all SQL files with explicit IDs in out_dir. Returns dict of file paths.\"\"\"
+    """Generate all SQL files with explicit IDs in out_dir. Returns dict of file paths."""
     os.makedirs(out_dir, exist_ok=True)
     paths = {}
 
@@ -240,10 +250,10 @@ def generate_files(num_employees=DEFAULT_NUM_EMPLOYEES, out_dir=OUT_DIR_DEFAULT,
     for idx, (name, desc) in enumerate(DEPARTMENTS, start=1):
         dept_rows.append([str(idx), sql_escape(name), sql_escape(desc), sql_escape(rand_datetime_minute())])
     with open(dept_file, "w", encoding="utf-8") as f:
-        f.write("-- departments\\nBEGIN;\\n\\n")
+        f.write("-- departments\nBEGIN;\n\n")
     write_inserts_chunked(dept_file, "department", cols_dept, dept_rows)
     with open(dept_file, "a", encoding="utf-8") as f:
-        f.write("COMMIT;\\n")
+        f.write("COMMIT;\n")
     paths['department'] = dept_file
 
     # Position
@@ -253,15 +263,16 @@ def generate_files(num_employees=DEFAULT_NUM_EMPLOYEES, out_dir=OUT_DIR_DEFAULT,
     for idx, (title, dept_idx, desc) in enumerate(POSITIONS, start=1):
         pos_rows.append([str(idx), sql_escape(title), str(dept_idx), sql_escape(desc), sql_escape(rand_datetime_minute())])
     with open(pos_file, "w", encoding="utf-8") as f:
-        f.write("-- positions\\nBEGIN;\\n\\n")
+        f.write("-- positions\nBEGIN;\n\n")
     write_inserts_chunked(pos_file, "position", cols_pos, pos_rows)
     with open(pos_file, "a", encoding="utf-8") as f:
-        f.write("COMMIT;\\n")
+        f.write("COMMIT;\n")
     paths['position'] = pos_file
 
     # Employees (we will keep hires in memory for payroll)
     emp_file = os.path.join(out_dir, "employee.sql")
-    cols_emp = ["employee_id","first_name","last_name","email","phone","birth_date","hire_date","termination_date","active","department_id","position_id","manager_id","emergency_contacts","notes","created_at"]
+    # include address after phone
+    cols_emp = ["employee_id","first_name","last_name","email","phone","address","birth_date","hire_date","termination_date","active","department_id","position_id","manager_id","emergency_contacts","notes","created_at"]
     eids = generate_unique_eids(num_employees)
     used_emails = set()
     employees = []  # list of dicts for later use
@@ -279,6 +290,7 @@ def generate_files(num_employees=DEFAULT_NUM_EMPLOYEES, out_dir=OUT_DIR_DEFAULT,
             suffix += 1
         used_emails.add(email)
         phone = f"+1{random.randint(2000000000, 9999999999)}"[:15]
+        address = generate_address()
         hire_iso = rand_date()
         hire_date_obj = datetime.date.fromisoformat(hire_iso)
         birth_latest = hire_date_obj - datetime.timedelta(days=18*365 + 4)    # approx adjust for leap years
@@ -315,6 +327,7 @@ def generate_files(num_employees=DEFAULT_NUM_EMPLOYEES, out_dir=OUT_DIR_DEFAULT,
             "last": last,
             "email": email,
             "phone": phone,
+            "address": address,
             "birth": birth_iso,
             "hire": hire_iso,
             "termination": termination_iso,
@@ -328,7 +341,7 @@ def generate_files(num_employees=DEFAULT_NUM_EMPLOYEES, out_dir=OUT_DIR_DEFAULT,
         }
         employees.append(emp)
         emp_row = [
-            str(eid), sql_escape(first), sql_escape(last), sql_escape(email), sql_escape(phone),
+            str(eid), sql_escape(first), sql_escape(last), sql_escape(email), sql_escape(phone), sql_escape(address),
             sql_escape(birth_iso), sql_escape(hire_iso),
             sql_escape(termination_iso) if termination_iso else "NULL",
             "true" if active else "false", str(dept_id), str(pos_id),
