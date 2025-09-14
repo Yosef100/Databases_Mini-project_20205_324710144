@@ -1,0 +1,45 @@
+-- 1) ספר טלפונים ארגוני + מחלקה/תפקיד/מנהל
+SELECT
+  e.employee_id,
+  e.first_name || ' ' || e.last_name AS full_name,
+  d.name  AS department,
+  p.title AS position,
+  COALESCE(m.first_name || ' ' || m.last_name, '—') AS manager,
+  e.email, e.phone, e.hire_date
+FROM employee e
+LEFT JOIN department d ON e.department_id = d.department_id
+LEFT JOIN position   p ON e.position_id   = p.position_id
+LEFT JOIN employee   m ON e.manager_id    = m.employee_id
+WHERE e.active = TRUE
+ORDER BY e.last_name, e.first_name;
+
+-- 2) שכר חודשי מצטבר לכל מחלקה (12 חודשים אחרונים)
+SELECT
+  date_trunc('month', pr.pay_date) AS month,
+  d.name AS department,
+  COUNT(*) AS payments_count,
+  SUM(pr.amount)::numeric(18,2) AS total_paid,
+  ROUND(AVG(pr.amount)::numeric, 2) AS avg_payment
+FROM payroll pr
+JOIN employee e ON pr.employee_id = e.employee_id
+LEFT JOIN department d ON e.department_id = d.department_id
+WHERE pr.pay_date >= (current_date - INTERVAL '12 months')
+GROUP BY month, d.name
+ORDER BY month DESC, d.name;
+
+-- 3) רישיונות שעומדים לפוג (30 יום קדימה) או שפגו
+SELECT
+  el.license_id,
+  el.employee_id,
+  e.first_name || ' ' || e.last_name AS employee,
+  el.license_name,
+  el.issued_date,
+  el.expiry_date,
+  CASE
+    WHEN el.expiry_date < current_date THEN 'expired'
+    WHEN el.expiry_date <= current_date + INTERVAL '30 days' THEN 'expires_soon'
+    ELSE 'active'
+  END AS status
+FROM employee_license el
+JOIN employee e ON e.employee_id = el.employee_id
+ORDER BY status, el.expiry_date;
