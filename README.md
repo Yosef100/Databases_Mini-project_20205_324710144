@@ -187,5 +187,13 @@ Explanation of errors:
 https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/constraintsErrorsExplanations.txt
 
 
+## Stage 3:
 
+# Queries
+
+Select
+
+- list of Organizations Phone Book + Department/Position/Manager
+- list of Cumulative monthly salary for each department (last 12 months)
+- list of Licenses that are about to expire (30 days ahead) or have expired
 
