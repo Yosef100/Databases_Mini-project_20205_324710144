@@ -197,6 +197,7 @@ Select
 - list of Cumulative monthly salary for each department (last 12 months)
 - list of Licenses that are about to expire (30 days ahead) or have expired
 
+script:
 https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/Stage%203%20query
 
 # view
@@ -215,6 +216,7 @@ fourth view:
 <img width="1637" height="831" alt="image" src="https://github.com/user-attachments/assets/740f3bb0-55e2-45c2-ab6c-176c22eedab8" />
 v4 is updatable he didn't know where to go.
 
+script:
 https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/view
 
 
@@ -240,5 +242,7 @@ fourth - Counting employees in the department.
 
 <img width="798" height="238" alt="image" src="https://github.com/user-attachments/assets/5d54bfa2-918f-4676-8ea5-54b0bb72102e" />
 
+script:
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/function
 
 
