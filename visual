@@ -1,0 +1,29 @@
+vs_1:
+
+SELECT d.name AS department,
+       COUNT(*) AS active_count
+FROM v_active_employees e
+JOIN department d ON e.department_id = d.department_id
+GROUP BY d.name
+ORDER BY active_count DESC;
+
+vs_2:
+WITH dow AS (
+  SELECT 0 AS d, 'Sun' AS weekday UNION ALL
+  SELECT 1, 'Mon' UNION ALL
+  SELECT 2, 'Tue' UNION ALL
+  SELECT 3, 'Wed' UNION ALL
+  SELECT 4, 'Thu' UNION ALL
+  SELECT 5, 'Fri' UNION ALL
+  SELECT 6, 'Sat'
+),
+hours_per_day AS (
+  SELECT s.day_of_week AS d,
+         SUM(EXTRACT(EPOCH FROM (s.end_time - s.start_time))/3600.0) AS total_hours
+  FROM v_oncall_shifts_valid s
+  GROUP BY s.day_of_week
+)
+SELECT w.weekday, COALESCE(h.total_hours, 0) AS total_hours
+FROM dow w
+LEFT JOIN hours_per_day h ON h.d = w.d
+ORDER BY w.d;
