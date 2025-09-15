@@ -253,4 +253,9 @@ fourth - Counting employees in the department.
 script:
 https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/function
 
+New_query_with_the_function:
+
+run_time:
+<img width="1695" height="1539" alt="image" src="https://github.com/user-attachments/assets/3f94516f-e861-47e8-88d7-8f6883d99528" />
+
 
