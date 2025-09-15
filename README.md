@@ -197,6 +197,10 @@ Select
 - list of Cumulative monthly salary for each department (last 12 months)
 - list of Licenses that are about to expire (30 days ahead) or have expired
 
+Time:
+<img width="1708" height="1545" alt="image" src="https://github.com/user-attachments/assets/f0835629-d568-40c9-9377-ea496135579e" />
+
+
 script:
 https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/Stage%203%20query
 
