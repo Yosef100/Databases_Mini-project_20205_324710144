@@ -215,6 +215,9 @@ fourth view:
 <img width="1637" height="831" alt="image" src="https://github.com/user-attachments/assets/740f3bb0-55e2-45c2-ab6c-176c22eedab8" />
 v4 is updatable he didn't know where to go.
 
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/view
+
+
 # visualization
 
 first - pie chart
