@@ -196,7 +196,8 @@ Select
 - list of Organizations Phone Book + Department/Position/Manager
 - list of Cumulative monthly salary for each department (last 12 months)
 - list of Licenses that are about to expire (30 days ahead) or have expired
-  
+
+https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/Stage%203%20query
 
 # view
 first view:
