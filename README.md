@@ -197,3 +197,21 @@ Select
 - list of Cumulative monthly salary for each department (last 12 months)
 - list of Licenses that are about to expire (30 days ahead) or have expired
 
+# view
+first view:
+<img width="1648" height="860" alt="image" src="https://github.com/user-attachments/assets/96164b1e-a38d-45a1-b036-287d21e6c933" />
+
+second view:
+<img width="1640" height="980" alt="image" src="https://github.com/user-attachments/assets/fe70beaa-d302-4c8e-935c-5504607bd8b4" />
+The day is out of the day that exist. Error.
+
+third view:
+<img width="1627" height="835" alt="image" src="https://github.com/user-attachments/assets/17affee8-10dd-47a8-bb03-5dbe00f0986b" />
+v3 is updatable he didn't know where to go.
+
+fourth view:
+<img width="1637" height="831" alt="image" src="https://github.com/user-attachments/assets/740f3bb0-55e2-45c2-ab6c-176c22eedab8" />
+v4 is updatable he didn't know where to go.
+
+
+
