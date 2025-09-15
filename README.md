@@ -196,6 +196,7 @@ Select
 - list of Organizations Phone Book + Department/Position/Manager
 - list of Cumulative monthly salary for each department (last 12 months)
 - list of Licenses that are about to expire (30 days ahead) or have expired
+  
 
 # view
 first view:
