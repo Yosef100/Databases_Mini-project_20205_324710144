@@ -257,5 +257,7 @@ New_query_with_the_function:
 
 run_time:
 <img width="1695" height="1539" alt="image" src="https://github.com/user-attachments/assets/3f94516f-e861-47e8-88d7-8f6883d99528" />
+<img width="1706" height="1241" alt="image" src="https://github.com/user-attachments/assets/7ff98632-3c01-4b9e-8a2b-d491944853c5" />
+
 
 
