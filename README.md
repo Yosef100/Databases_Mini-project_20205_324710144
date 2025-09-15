@@ -22,6 +22,8 @@ The database should make it easy to answer practical questions such as:
 ---
 
 # ERD:
+<img width="3978" height="1548" alt="erdplus (3)" src="https://github.com/user-attachments/assets/5a983e46-e685-4dd4-ac39-e22f9788373a" />
+
 <img width="798" height="550" alt="image" src="https://github.com/user-attachments/assets/0774995e-01ca-4feb-b05e-9ea212c5227e" />
 
 
