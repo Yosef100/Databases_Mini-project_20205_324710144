@@ -199,6 +199,7 @@ Select
 
 Time:
 <img width="1708" height="1545" alt="image" src="https://github.com/user-attachments/assets/f0835629-d568-40c9-9377-ea496135579e" />
+<img width="1696" height="1356" alt="image" src="https://github.com/user-attachments/assets/dd286d6e-0df3-4146-b4ae-9c352e3c33ed" />
 
 
 script:
