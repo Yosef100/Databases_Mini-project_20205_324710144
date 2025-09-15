@@ -1,0 +1,54 @@
+f1:
+CREATE OR REPLACE FUNCTION fn_full_name(emp_id INT)
+RETURNS TEXT LANGUAGE sql AS $$
+  SELECT e.first_name || ' ' || e.last_name
+  FROM employee e
+  WHERE e.employee_id = emp_id;
+$$;
+
+-- בדיקה
+SELECT fn_full_name(1);
+
+f2:
+CREATE OR REPLACE FUNCTION fn_license_status(expiry DATE)
+RETURNS TEXT LANGUAGE plpgsql AS $$
+BEGIN
+  IF expiry < CURRENT_DATE THEN
+    RETURN 'expired';
+  ELSIF expiry <= CURRENT_DATE + INTERVAL '30 days' THEN
+    RETURN 'expires_soon';
+  ELSE
+    RETURN 'active';
+  END IF;
+END;
+$$;
+
+-- בדיקה
+SELECT license_id, fn_license_status(expiry_date) AS status
+FROM employee_license;
+
+f3:
+CREATE OR REPLACE FUNCTION fn_monthly_pay(emp_id INT, yr INT, mon INT)
+RETURNS NUMERIC LANGUAGE sql AS $$
+  SELECT COALESCE(SUM(amount),0)
+  FROM payroll
+  WHERE employee_id = emp_id
+    AND EXTRACT(YEAR  FROM pay_date) = yr
+    AND EXTRACT(MONTH FROM pay_date) = mon;
+$$;
+
+-- בדיקה
+SELECT fn_monthly_pay(1, 2025, 9);
+
+f4:
+CREATE OR REPLACE FUNCTION fn_department_headcount(dept_id INT)
+RETURNS INT LANGUAGE sql AS $$
+  SELECT COUNT(*)
+  FROM employee
+  WHERE department_id = dept_id AND active = TRUE;
+$$;
+
+-- בדיקה
+SELECT d.name, fn_department_headcount(d.department_id) AS active_employees
+FROM department d
+ORDER BY active_employees DESC;
