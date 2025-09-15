@@ -1,0 +1,24 @@
+1.
+SELECT e.employee_id,
+       fn_full_name(e.employee_id)                 AS full_name,
+       d.name                                      AS department,
+       p.title                                     AS position,
+       COALESCE(fn_full_name(e.manager_id), '—')   AS manager,
+       e.email, e.phone, e.hire_date
+FROM employee e
+LEFT JOIN department d ON e.department_id=d.department_id
+LEFT JOIN position   p ON e.position_id=p.position_id
+WHERE e.active=TRUE
+ORDER BY full_name;
+2.
+SELECT el.license_id, el.employee_id,
+       fn_full_name(el.employee_id)       AS employee,
+       el.license_name, el.issued_date, el.expiry_date,
+       fn_license_status(el.expiry_date)  AS status
+FROM employee_license el
+ORDER BY status, el.expiry_date;
+3.
+SELECT d.name AS department,
+       fn_department_headcount(d.department_id) AS active_employees
+FROM department d
+ORDER BY active_employees DESC;
