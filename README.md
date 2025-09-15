@@ -213,5 +213,27 @@ fourth view:
 <img width="1637" height="831" alt="image" src="https://github.com/user-attachments/assets/740f3bb0-55e2-45c2-ab6c-176c22eedab8" />
 v4 is updatable he didn't know where to go.
 
+# visualization
+
+first - pie chart
+- Active employees by department
+<img width="2212" height="1343" alt="image" src="https://github.com/user-attachments/assets/65c6ae11-9541-42b5-b656-22b5ec8074cb" />
+
+second - bar
+- Cumulative on-call hours by day of the week
+<img width="2215" height="1337" alt="image" src="https://github.com/user-attachments/assets/1bc82b6f-254d-48b1-ae67-7d11845abea7" />
+
+# function
+
+first - Returning the employee's full name. (now we can put the full name in one time)
+
+second - License status by validity. (we don't need to write case anymore)
+
+third - Total payments to an employee in a particular month. (we don't need sum for this anymore)
+
+fourth - Counting employees in the department. 
+
+<img width="798" height="238" alt="image" src="https://github.com/user-attachments/assets/5d54bfa2-918f-4676-8ea5-54b0bb72102e" />
+
 
 
