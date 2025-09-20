@@ -115,26 +115,40 @@ https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/bac
 # Queries
 https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/Queries.sql
 
-Select
+Select:
 
-- list every active employee with their department name, job title and manager's name (if any), ordered alphabetically by last name.
-- for each month with payroll activity, show how many payments were made and the total, average, minimum and maximum payment amounts — newest months first.
-- find all employee licenses that will expire in the next 60 days, with how many days remain — ordered by nearest expiry.
-- for each employee show how many on-call shifts they have and the total on-call time (as an interval), ordered by who has the most on-call time.
+1- list every active employee with their department name, job title and manager's name (if any), ordered alphabetically by last name.
 
-Update
-- mark as inactive any employee who already has a termination_date on or before today
-- change the position of every employee currently in the "Junior Developer" role to the "Senior Developer" role.
+2- for each month with payroll activity, show how many payments were made and the total, average, minimum and maximum payment amounts — newest months first.
 
-Delete
-- remove old payroll rows (older than seven years).
-- remove any department that has neither positions assigned to it nor employees assigned to it (i.e., a completely unused department).
+3- find all employee licenses that will expire in the next 60 days, with how many days remain — ordered by nearest expiry.
 
-Parametrized
-- the top N employees (by total payroll amount) in department department_name between start_date and end_date.
-- for the next X days (where X = days_ahead), list employees who have licenses that will expire, how many licenses will expire, and the nearest expiry date — ordered by most urgent
-- for year YYYY (pass as year), compute each employee's total pay that year, then summarize those per position: how many employees had payroll activity, average of employee totals, min, max and sum — sorted by average descending
-- for the chosen day_of_week, find every pair of employees who have shifts that overlap in time. Returns each pair, how many overlapping shift-pairs they have, and the earliest/latest overlap times (per grouped set).
+4- for each employee show how many on-call shifts they have and the total on-call time (as an interval), ordered by who has the most on-call time.
+
+
+Update:
+
+5- deactivate employees in departments with low average payroll
+
+6- For each employee and day of the week, compute the correct ordering of that employee's shifts and update the escalation_order column accordingly
+
+
+Delete:
+
+7- delete license rows belonging to employees who are already inactive and whose expiry_date is more than 1 year ago.
+
+8- delete old oncall_shift rows, keeping the most recent per employee
+
+
+Parametrized:
+
+9- the top N employees (by total payroll amount) in department department_name between start_date and end_date.
+
+10- for the next X days (where X = days_ahead), list employees who have licenses that will expire, how many licenses will expire, and the nearest expiry date — ordered by most urgent
+
+11- for year YYYY (pass as year), compute each employee's total pay that year, then summarize those per position: how many employees had payroll activity, average of employee totals, min, max and sum — sorted by average descending
+
+12- for the chosen day_of_week, find every pair of employees who have shifts that overlap in time. Returns each pair, how many overlapping shift-pairs they have, and the earliest/latest overlap times (per grouped set).
 
 
 # Indexes:
@@ -147,27 +161,61 @@ Added indexes on:
 - expiry_date of employee_license - aids in queries 3,10
 
 # Timing: Before | After
-<img width="862" height="579" alt="stage 2 timings" src="https://github.com/user-attachments/assets/edd68d16-a76f-4254-9338-d64cebbb7a57" />
+<img width="317" height="339" alt="image" src="https://github.com/user-attachments/assets/3c5c9b35-e28e-468e-8fee-6cf37a0f75a1" />
+
 
 # Constraints
 https://github.com/Yosef100/Databases_Mini-project_20205_324710144/blob/main/Constraints.sql
 
+- department — NOT NULL — name must be present.
+
+- department — UNIQUE — name must be unique.
+
+- position — NOT NULL — title must be present.
+
+- position — UNIQUE — title must be unique.
+
+- employee — NOT NULL — first_name must be present.
+
+- employee — NOT NULL — last_name must be present.
+
 - employee — NOT NULL — hire_date must be present.
+
 - employee — CHECK — termination_date, if present, must be after hire_date.
+
 - employee — CHECK — if birth_date is present, age at hire must be between 18 and 65 years.
+
 - employee — CHECK — email must not be NULL or blank.
+
+- employee — UNIQUE — email must be unique.
+
+- employee — TRIGGER (row-level BEFORE) — manager_id assignments must not create a management cycle (no A→B→…→A loops; also disallow self-management).
+
 - payroll — NOT NULL — employee_id must be present.
+
 - payroll — NOT NULL — amount must be present.
+
 - payroll — NOT NULL — pay_date must be present.
+
 - payroll — CHECK — amount must be non-negative.
+
 - payroll — TRIGGER (row-level BEFORE) — pay_date must be on or after the referenced employee’s hire_date.
+
 - oncall_shift — NOT NULL — day_of_week must be present.
+
 - oncall_shift — CHECK — day_of_week must be between 1 and 7.
+
 - oncall_shift — NOT NULL — start_time must be present.
+
 - oncall_shift — NOT NULL — end_time must be present.
+
 - oncall_shift — NOT NULL — escalation_order must be present.
+
 - oncall_shift — CHECK — escalation_order must be greater than zero.
+
 - oncall_shift — CHECK — start_time must be before end_time.
+
+employee_license — TRIGGER (row-level BEFORE) — prevents inserting/updating a lower-level license when a higher-level license for the same employee + field already exists (levels: junior < intermediate < senior).
 
 log
 
